@@ -1,0 +1,60 @@
+name: Build for Windows  
+  
+on:  
+  push:  
+    branches: [ main, master ]  
+  pull_request:  
+    branches: [ main, master ]  
+  workflow_dispatch:  
+  
+jobs:  
+  build-windows:  
+    name: Windows x86_64 (MSYS2/MinGW64)  
+    runs-on: windows-2019  
+  
+    defaults:  
+      run:  
+        shell: msys2 {0}  
+  
+    steps:  
+      - name: Checkout source  
+        uses: actions/checkout@v4  
+  
+      - name: Set up MSYS2 + MinGW64  
+        uses: msys2/setup-msys2@v2  
+        with:  
+          msystem: MINGW64  
+          update: true  
+          install: >-  
+            mingw-w64-x86_64-gcc  
+            mingw-w64-x86_64-meson  
+            mingw-w64-x86_64-ninja  
+            mingw-w64-x86_64-pkg-config  
+            mingw-w64-x86_64-jack2  
+            mingw-w64-x86_64-libsndfile  
+            mingw-w64-x86_64-libsamplerate  
+  
+      - name: Configure (Meson)  
+        run: |  
+          meson setup build \  
+            --prefix=/mingw64 \  
+            --buildtype=release \  
+            --strip \  
+            -Dalsa_in_out=disabled \  
+            -Dalsa_midi=disabled \  
+            -Dzalsa=disabled  
+  
+      - name: Build (Ninja)  
+        run: ninja -C build  
+  
+      - name: Collect executables  
+        run: |  
+          mkdir -p dist  
+          find build -name "*.exe" -exec cp {} dist/ \;  
+  
+      - name: Upload artifacts  
+        uses: actions/upload-artifact@v4  
+        with:  
+          name: jack-example-tools-windows-x64  
+          path: dist/*.exe  
+          if-no-files-found: error
