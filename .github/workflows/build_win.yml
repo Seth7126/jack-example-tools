@@ -10,7 +10,7 @@ on:
 jobs:  
   build-windows:  
     name: Windows x86_64 (MSYS2/MinGW64)  
-    runs-on: windows-latest   # 修正：windows-2019 已废弃  
+    runs-on: windows-latest  
   
     defaults:  
       run:  
@@ -33,15 +33,10 @@ jobs:
             mingw-w64-x86_64-jack2  
             mingw-w64-x86_64-libsndfile  
             mingw-w64-x86_64-libsamplerate  
+            mingw-w64-x86_64-opus  
   
       - name: Configure (Meson)  
-        run: |  
-          meson setup build \  
-            --buildtype=release \  
-            --strip \  
-            -Dalsa_in_out=disabled \  
-            -Dalsa_midi=disabled \  
-            -Dzalsa=disabled  
+        run: meson setup build --buildtype=release --strip -Dalsa_in_out=disabled -Dalsa_midi=disabled -Dzalsa=disabled  
   
       - name: Build (Ninja)  
         run: ninja -C build  
