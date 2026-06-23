@@ -10,7 +10,7 @@ on:
 jobs:  
   build-windows:  
     name: Windows x86_64 (MSYS2/MinGW64)  
-    runs-on: windows-2019  
+    runs-on: windows-latest   # 修正：windows-2019 已废弃  
   
     defaults:  
       run:  
@@ -37,7 +37,6 @@ jobs:
       - name: Configure (Meson)  
         run: |  
           meson setup build \  
-            --prefix=/mingw64 \  
             --buildtype=release \  
             --strip \  
             -Dalsa_in_out=disabled \  
