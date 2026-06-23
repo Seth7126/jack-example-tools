@@ -36,15 +36,15 @@ jobs:
             mingw-w64-x86_64-opus  
   
       - name: Configure (Meson)  
-        run: meson setup build --buildtype=release --strip -Dalsa_in_out=disabled -Dalsa_midi=disabled -Dzalsa=disabled  
+        run: meson setup build --buildtype=release --strip -Dalsa_in_out=disabled -Dalsa_midi=disabled -Dzalsa=disabled -Djack_netsource=disabled  
   
       - name: Build (Ninja)  
         run: ninja -C build  
   
       - name: Collect executables  
-        run: |  
-          mkdir -p dist  
-          find build -name "*.exe" -exec cp {} dist/ \;  
+        run: find build -name "*.exe" -exec cp {} dist/ \; && ls dist/  
+        env:  
+          MSYS2_ARG_CONV_EXCL: "*"  
   
       - name: Upload artifacts  
         uses: actions/upload-artifact@v4  
